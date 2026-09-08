@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="3.1.0" client="site" method="upgrade">
+	<name>mod_timeclockinfo</name>
+	<author>Scott Price</author>
+	<creationDate>2011 06 21</creationDate>
+	<copyright>
+        Copyright (C) 2016, 2011 Hunt Utilities Group, LLC
+        portions Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
+    </copyright>
+	<license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL</license>
+	<authorEmail>prices@hugllc.com</authorEmail>
+	<authorUrl>Scott Price</authorUrl>
+    <version>0.9.30</version>
+	<description>MOD_TIMECLOCKINFO_DESC</description>
+    <namespace>HUGLLC\Module\TimeclockInfo</namespace>
+	<files>
+		<filename module="mod_timeclockinfo">mod_timeclockinfo.php</filename>
+        <filename>index.html</filename>
+        <folder>tmpl</folder>
+        <folder>language</folder>
+        <folder>Helper</folder>
+	</files>
+    <languages>
+            <language tag="en-GB">language/en-GB/en-GB.mod_timeclockinfo.ini</language>
+            <language tag="en-GB">language/en-GB/en-GB.mod_timeclockinfo.sys.ini</language>
+    </languages>
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="showYTDHours" type="list" default="1" label="MOD_TIMECLOCKINFO_YTD" description="MOD_TIMECLOCKINFO_YTD_DESC">
+                    <option value="1">JSHOW</option>
+                    <option value="0">JHIDE</option>
+                </field>
+                <field name="showHoursPerWeek" type="list" default="1" label="MOD_TIMECLOCKINFO_HOURS_PER_WEEK" description="MOD_TIMECLOCKINFO_HOURS_PER_WEEK_DESC">
+                    <option value="1">JSHOW</option>
+                    <option value="0">JHIDE</option>
+                </field>
+                <field name="showPTO" type="list" default="1" label="MOD_TIMECLOCKINFO_SHOW_PTO_STATUS" description="MOD_TIMECLOCKINFO_SHOW_PTO_STATUS_DESC">
+                    <option value="1">JSHOW</option>
+                    <option value="0">JHIDE</option>
+                </field>
+            </fieldset>
+            <fieldset name="advanced">
+            </fieldset>
+            <fieldset name="other">
+            </fieldset>
+        </fields>
+    </config>
+</extension>

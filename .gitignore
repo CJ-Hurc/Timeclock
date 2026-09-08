@@ -17,3 +17,7 @@ contrib/
 com_timeclock/admin/timeclock.xml
 old/
 github/
+node_modules/
+.hurc-harness/
+.env
+__pycache__/
