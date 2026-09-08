@@ -20,3 +20,4 @@ github/
 node_modules/
 .hurc-harness/
 .env
+__pycache__/
