@@ -1,0 +1,33 @@
+{
+  "schema": "hurc-complete-e2e-actor-catalog/v1",
+  "source": "guest/user/admin for Timeclock Joomla package",
+  "actors": [
+    {
+      "actor_id": "guest",
+      "role": "guest",
+      "group": "Guest",
+      "channel": "site",
+      "guest": true,
+      "requires_auth": false,
+      "source": "configs/complete-e2e/actors.json"
+    },
+    {
+      "actor_id": "user",
+      "role": "user",
+      "group": "Registered",
+      "channel": "site",
+      "guest": false,
+      "requires_auth": true,
+      "source": "configs/complete-e2e/actors.json"
+    },
+    {
+      "actor_id": "admin",
+      "role": "admin",
+      "group": "Admin",
+      "channel": "administrator",
+      "guest": false,
+      "requires_auth": true,
+      "source": "configs/complete-e2e/actors.json"
+    }
+  ]
+}

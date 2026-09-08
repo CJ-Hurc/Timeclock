@@ -22,6 +22,8 @@ copy_from_dev: check copy-com_timeclock copy-mod_timeclockinfo copy-plg_user_tim
 copy-com_timeclock:
 	rsync -av --delete --include="contrib/index.html" --exclude="contrib/*" ${SRC}/com_timeclock/site/* ${DEST}/components/com_timeclock/
 	rsync -av --delete ${SRC}/com_timeclock/admin/* ${DEST}/administrator/components/com_timeclock/
+	rsync -av --delete ${SRC}/components/com_timeclock/tmpl/ ${DEST}/components/com_timeclock/tmpl/
+	rsync -av --delete ${SRC}/administrator/components/com_timeclock/tmpl/ ${DEST}/administrator/components/com_timeclock/tmpl/
 	rsync -av ${SRC}/com_timeclock/admin/languages/en-GB/* ${DEST}/administrator/language/en-GB/
 	rsync -av ${SRC}/com_timeclock/site/languages/en-GB/* ${DEST}/language/en-GB/
 
@@ -51,8 +53,12 @@ rel/${PKG_WITH_VERSION}: rel/pkg_timeclock.zip
 	cp $< $@
 
 build/pkg_timeclock/packages/com_timeclock.zip:
-	mkdir -p build/pkg_timeclock/packages
-	zip -r build/pkg_timeclock/packages/com_timeclock.zip com_timeclock
+	mkdir -p build/pkg_timeclock/packages build/stage/com_timeclock
+	rsync -a --delete com_timeclock/ build/stage/com_timeclock/
+	mkdir -p build/stage/com_timeclock/admin build/stage/com_timeclock/site
+	rsync -a --delete administrator/components/com_timeclock/tmpl/ build/stage/com_timeclock/admin/tmpl/
+	rsync -a --delete components/com_timeclock/tmpl/ build/stage/com_timeclock/site/tmpl/
+	cd build/stage && zip -r ../pkg_timeclock/packages/com_timeclock.zip com_timeclock
 
 build/pkg_timeclock/packages/plg_user_timeclock.zip:
 	mkdir -p build/pkg_timeclock/packages
