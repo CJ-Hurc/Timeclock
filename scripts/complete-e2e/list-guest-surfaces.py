@@ -1,33 +1,38 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 import json
-from pathlib import Path
-ROOT = Path(__file__).resolve().parents[2]
-surfaces = []
-for rel in sorted(str(p.relative_to(ROOT)).replace("\\", "/") for p in ROOT.rglob("*.php") if "/tmpl/" in str(p).replace("\\", "/") and ".hurc-harness" not in str(p) and "/build/" not in str(p)):
-    surfaces.append({
-        "id": f"ui:{rel}",
-        "kind": "web-ui",
-        "path": rel,
-        "origin": "runtime",
-        "discovered": True,
-        "behavior_proven": False,
-    })
-# Module + option surfaces
-surfaces.append({
-    "id": "joomla:option:com_timeclock",
-    "kind": "web-ui",
-    "path": "index.php?option=com_timeclock&view=timesheet",
-    "origin": "runtime",
-    "discovered": True,
-    "behavior_proven": False,
-})
-surfaces.append({
+surfaces = [
+  {
     "id": "ndp:view:TimeclockTimesheet",
     "kind": "web-ui",
     "path": "index.php?option=com_timeclock&view=timesheet",
     "origin": "runtime",
     "discovered": True,
     "behavior_proven": False,
-})
+  },
+  {
+    "id": "ui:components/com_timeclock/tmpl/timesheet/default.php",
+    "kind": "web-ui",
+    "path": "components/com_timeclock/tmpl/timesheet/default.php",
+    "origin": "runtime",
+    "discovered": True,
+    "behavior_proven": False,
+  },
+  {
+    "id": "ui:administrator/components/com_timeclock/tmpl/timesheets/default.php",
+    "kind": "web-ui",
+    "path": "administrator/components/com_timeclock/tmpl/timesheets/default.php",
+    "origin": "runtime",
+    "discovered": True,
+    "behavior_proven": False,
+  },
+  {
+    "id": "ui:mod_timeclockinfo/tmpl/default.php",
+    "kind": "web-ui",
+    "path": "mod_timeclockinfo/tmpl/default.php",
+    "origin": "runtime",
+    "discovered": True,
+    "behavior_proven": False,
+  },
+]
 print(json.dumps({"surfaces": surfaces}, separators=(",", ":")))
