@@ -5,6 +5,27 @@ from datetime import datetime, timezone
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 OUT = ROOT / ".hurc-harness" / "state" / "complete-e2e" / "authoritative-backend.json"
+
+def _stamp(payload: dict) -> None:
+    active = ROOT / ".hurc-harness" / "state" / "complete-e2e" / "active-run.json"
+    if not active.is_file():
+        return
+    try:
+        act = json.loads(active.read_text(encoding="utf-8"))
+        run_id = str(act.get("run_id") or "")
+        run_dir = ROOT / ".hurc-harness" / "state" / "complete-e2e" / "runs" / run_id
+        run_meta = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
+        comp = json.loads((run_dir / "compile.json").read_text(encoding="utf-8"))
+        uni = comp.get("universe_id") or (comp.get("universe") or {}).get("id") or (comp.get("universe") or {}).get("hash")
+        snap = run_meta.get("snapshot_id")
+        if snap:
+            payload["snapshot_id"] = snap
+        if uni:
+            payload["universe_id"] = uni
+        if run_id:
+            payload["run_id"] = run_id
+    except (OSError, json.JSONDecodeError, TypeError):
+        return
 BASE = (os.environ.get("CE2E_HTTP_BASE") or os.environ.get("BASE_URL") or "").rstrip("/")
 if not BASE:
     cfg = ROOT / "configs" / "complete-e2e" / "runtime.json"
@@ -70,6 +91,7 @@ payload = {
   "at": datetime.now(timezone.utc).isoformat(),
   "prover": "authoritative-backend-live",
 }
+_stamp(payload)
 OUT.parent.mkdir(parents=True, exist_ok=True)
 OUT.write_text(json.dumps(payload, indent=2) + "\n")
 for run in (ROOT/".hurc-harness/state/complete-e2e/runs").glob("ce2e-*/receipts"):
