@@ -19,3 +19,4 @@ old/
 github/
 node_modules/
 .hurc-harness/
+.env
