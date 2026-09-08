@@ -26,7 +26,7 @@ for file in `find ./${dir} -iname "*.xml"|grep -v contrib |grep -v Joomla |grep 
     ${SED} -i'' "s/^[[:space:]]*<version>[ ~a-zA-Z0-9:.$]*<\/version>/    <version>${1}<\/version>/g" ${file}
 done
 
-cat << EOF > Version.mk
+cat << EOF > Version.env
 # This is automatically created.  Do not EDIT.
 PACKAGE_VERSION := ${1}
 EOF
@@ -36,7 +36,7 @@ mkdir -p github
 cp rel/pkg_timeclock-${1}.zip github/
 SHA512SUM=`${SHA512} github/pkg_timeclock-${1}.zip | ${CUT} -d " " -f 1`
 SHA256SUM=`${SHA256} github/pkg_timeclock-${1}.zip | ${CUT} -d " " -f 1`
-TEMPLATE=`cat update.xml.template`
+TEMPLATE=`cat update.xml.dist`
 XML1=${TEMPLATE//__VERSION__/${1}}
 XML2=${XML1/__SHA512__/"<sha512>${SHA512SUM}</sha512>"}
 XML3=${XML2/__SHA256__/"<sha256>${SHA256SUM}</sha256>"}

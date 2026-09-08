@@ -8,7 +8,7 @@ SVN_SERVER=https://svn.hugllc.com
 SRC=`pwd`
 DEST="${SRC}/Joomla/"
 
-include Version.mk
+include Version.env
 
 PKG_WITH_VERSION := pkg_timeclock-${PACKAGE_VERSION}.zip
 
