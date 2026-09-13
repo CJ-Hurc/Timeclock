@@ -35,9 +35,10 @@ paths = [
 ]
 surfaces = [probe(BASE + "/" + p, sid) for sid, p in paths]
 surfaces.append(probe(BASE + "/", "ndp:view:TimeclockTimesheet"))
+unreachable = all((not s.get("ok")) and s.get("error") for s in surfaces)
 payload = {
   "schema": "hurc-complete-e2e-page-error-free/v1",
-  "ok": all(s.get("ok") for s in surfaces),
+  "ok": False if unreachable else all(s.get("ok") for s in surfaces),
   "snapshot_id": snap,
   "universe_id": uni,
   "base": BASE,
@@ -45,6 +46,10 @@ payload = {
   "surfaces": surfaces,
   "prover": "page-error-free",
 }
+if unreachable:
+    payload["blocked_environment"] = True
+    payload["error"] = "BLOCKED_ENVIRONMENT"
+    payload["reason"] = "http_unreachable"
 OUT.parent.mkdir(parents=True, exist_ok=True)
 text = json.dumps(payload, indent=2) + "\n"
 OUT.write_text(text)

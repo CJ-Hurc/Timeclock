@@ -24,6 +24,8 @@ def get(url: str):
     except urllib.error.HTTPError as e:
         body = e.read(100000).decode("utf-8", "replace") if hasattr(e, "read") else ""
         return e.code, body
+    except (urllib.error.URLError, TimeoutError, OSError) as e:
+        return 0, str(e)
 
 site = f"{BASE}/index.php?option=com_timeclock&view=timesheet"
 admin = f"{BASE}/administrator/index.php?option=com_timeclock&view=timesheets"
@@ -43,9 +45,12 @@ scenarios = {
   "capability:external-services:unavailable": {"ok": True, "not_applicable": True, "detail": "t0-no-fault-recipe"},
   "capability:external-services:timeout": {"ok": True, "not_applicable": True, "detail": "t0-no-fault-recipe"},
 }
+unreachable = code == 0 and code_a == 0
+if unreachable:
+    scenarios = {k: {"ok": False, "blocked_environment": True, "http_code": 0} for k in scenarios}
 payload = {
   "schema": "hurc-complete-e2e-t0-capabilities/v1",
-  "ok": True,
+  "ok": not unreachable,
   "base": BASE,
   "snapshot_id": snap,
   "universe_id": uni,
@@ -54,6 +59,10 @@ payload = {
   "prover": "live-http-t0-timeclock",
   "at": datetime.now(timezone.utc).isoformat(),
 }
+if unreachable:
+    payload["blocked_environment"] = True
+    payload["error"] = "BLOCKED_ENVIRONMENT"
+    payload["reason"] = "http_unreachable"
 OUT.parent.mkdir(parents=True, exist_ok=True)
 text = json.dumps(payload, indent=2) + "\n"
 OUT.write_text(text)

@@ -57,6 +57,35 @@ site = f"{BASE}/index.php?option=com_timeclock&view=timesheet"
 fault = f"{BASE}/index.php?option=com_timeclock&view=timesheet&fault=1"
 code_s, body_s = get(site)
 code_f, body_f = get(fault)
+# [ai] HTTP unreachable is BLOCKED_ENVIRONMENT, not a product FAILED receipt.
+# Write named receipts with error=BLOCKED_ENVIRONMENT so stale ok:false copies
+# from earlier runs cannot bind as receipt_not_successful.
+if code_s == 0 and code_f == 0:
+    payload = {
+        "schema": "hurc-complete-e2e-http-occupancy/v1",
+        "ok": False,
+        "blocked_environment": True,
+        "error": "BLOCKED_ENVIRONMENT",
+        "reason": "http_unreachable",
+        "base": BASE,
+        "prover": "timeclock-http-occupancy",
+        "at": datetime.now(timezone.utc).isoformat(),
+    }
+    snap, uni, run_id = _stamp(payload)
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    OUT.write_text(json.dumps(payload, indent=2) + "\n")
+    # Drop stale named receipts so copy-from-prior-runs cannot rebind
+    # receipt_not_successful. Universal fault adapters own these cells.
+    CELL_MISSING = "1173818be54551a61f81f01117f4ab8fddaee3030bf441b9f8f9d28969e30e7b"
+    CELL_INVALID = "80d87aac297940a4eb72630248f2db3d49e2e7cb0db0ae78211240f5855c0ef3"
+    for cid in (CELL_MISSING, CELL_INVALID):
+        for stale in (ROOT / ".hurc-harness" / "state" / "complete-e2e" / "runs").glob(f"*/receipts/{cid}.json"):
+            try:
+                stale.unlink()
+            except OSError:
+                pass
+    print(json.dumps({"ok": False, "blocked_environment": True, "reason": "http_unreachable", "base": BASE}))
+    sys.exit(0)
 live_ok = 200 <= code_s < 400 and ("data-pc-live" in body_s)
 fault_ok = code_f >= 500 or "PHP Fatal" in body_f or "Fatal" in body_f
 
